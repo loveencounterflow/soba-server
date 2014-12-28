@@ -22,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/loveencounterflow/soba-server/issues"
   },
-  "homepage": "https://github.com/loveencounterflow/soba-server"
+  "homepage": "https://github.com/loveencounterflow/soba-server",
+  "dependencies": {
+    "coffeenode-trm": "^0.1.20",
+    "socket.io": "^1.2.1"
+  }
 }
