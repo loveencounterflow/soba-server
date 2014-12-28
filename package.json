@@ -1,0 +1,26 @@
+{
+  "name": "soba-server",
+  "version": "0.1.2",
+  "description": "server-side part of SoBa socket-based communication",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loveencounterflow/soba-server.git"
+  },
+  "keywords": [
+    "socket",
+    "websockets",
+    "ipc",
+    "client",
+    "server"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loveencounterflow/soba-server/issues"
+  },
+  "homepage": "https://github.com/loveencounterflow/soba-server"
+}
