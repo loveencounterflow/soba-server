@@ -41,18 +41,96 @@ for name_ of TEACUP
         META charset: 'utf-8'
         TITLE 'SoBa ソバ Monitor'
         LINK rel: 'shortcut icon', href: '/public/favicon.ico?v6'
-        # STYLE css
+        LINK rel: 'stylesheet', href: '/common/html5doctor-css-reset.css?v6'
+        # LINK rel: 'stylesheet', href: '/public/mingkwai-typesetter.css?v6'
+        SCRIPT type: 'text/javascript', src: '/common/jquery-2.1.3.js'
+        # SCRIPT type: 'text/javascript', src: '/common/css-regions-polyfill.min.js'
+        # SCRIPT src: 'http://code.jquery.com/jquery-1.11.1.js'
+        SCRIPT src: '/socket.io/socket.io.js'
+        STYLE """
+          body {
+            background-image:   url(./public/soba-logo.png);
+            background-repeat:  no-repeat;
+            padding:            1em;
+          }
+          #client-id {
+            // text-align:         right;
+            padding:            1em;
+            margin-top:         1em;
+            margin-bottom:      1em;
+            background-color:   rgba( 255, 255, 255, 0.5 );
+            width:              80%;
+            min-height:         1em;
+            border: 1px solid red;
+          }
+          #news {
+            padding:            1em;
+            margin-top:         1em;
+            margin-bottom:      1em;
+            background-color:   rgba( 255, 255, 255, 0.5 );
+            width:              80%;
+            min-height:         1em;
+            border: 1px solid blue;
+          }
+          """
       #=====================================================================================================
       BODY =>
-        SCRIPT src: 'http://code.jquery.com/jquery-1.11.1.js'
-        SCRIPT src: '/socket.io/socket.io.js'
         H1 "SoBa ソバ Monitor"
+        DIV '#client-id'
         DIV '#news'
         COFFEESCRIPT =>
           log     = console.log.bind console
+          rpr     = JSON.stringify.bind JSON
           socket  = io()
-          socket.on 'news', ( message ) ->
-            ( $ '#news' ).append ( $ '<div></div>' ).text message
+          #.................................................................................................
+          emit = ( type, data ) ->
+            publish_news 'sent-event', { type, data, }
+            socket.emit type, data
+          #.................................................................................................
+          scroll  = ->
             ( $ 'html, body' ).stop().animate { scrollTop: ( $ '#bottom' ).offset().top }, 2000
+          #.................................................................................................
+          publish_news = ( topic, data ) ->
+            log '©4363t2', rpr ( x for x in arguments)
+            switch topic
+              #.............................................................................................
+              when 'received-event'
+                { type, data, } = data
+                switch type
+                  when 'helo'
+                    message = "received event: type \"helo\"; updated client ID"
+                  else
+                    if data?
+                      message = "received event: type #{rpr type}; #{rpr data}"
+                    else
+                      message = "received event: type #{rpr type}"
+              #.............................................................................................
+              when 'client-count'
+                { value, delta, } = data
+                if delta > 0
+                  message = "client count now up to #{value}"
+                else
+                  message = "client count now down to #{value}"
+              #.............................................................................................
+              when 'sent-event'
+                { type, data, } = data
+                if data?
+                  message = "sent event: type #{rpr type}; #{rpr data}"
+                else
+                  message = "sent event: type #{rpr type}"
+              else
+                message = "topic: #{topic}, data: #{rpr data}"
+            #...............................................................................................
+            ( $ '#news' ).append ( $ '<div></div>' ).text message
+          #.................................................................................................
+          publish_client_id = ( data ) ->
+            log '©kl62m', rpr ( x for x in arguments)
+            ( $ '#client-id' ).append ( $ '<div></div>' ).text "Client-ID: #{data[ 'client-id' ]}"
+          #.................................................................................................
+          socket.on 'news', publish_news
+          socket.on 'helo', publish_client_id
+          emit 'helo'
+          emit 'foo', 42
+          emit 'bar', { baz: true, }
         #===================================================================================================
         DIV '#bottom'
