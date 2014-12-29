@@ -90,6 +90,10 @@ new_router                = require 'socket.io-events'
     # @emit_news    R, {}
     debug '©Gp1qF', event
     next()
+  #.........................................................................................................
+  router.on 'news', ( socket, event, next ) =>
+    @emit_news R, event...
+    next()
   #---------------------------------------------------------------------------------------------------------
   sio_server.on 'connection', ( socket ) =>
     R[ 'client-count' ] += 1
@@ -112,15 +116,15 @@ new_router                = require 'socket.io-events'
   #.........................................................................................................
   return R
 
-
 #-----------------------------------------------------------------------------------------------------------
 @on = ( me, matcher, handler ) ->
   return router.on matcher, handler
 
 #-----------------------------------------------------------------------------------------------------------
 # @new_event  = ( me, name, data... ) -> [ name, data, ]
-@get_app    = ( me ) -> me[ '%app' ]
-@get_router = ( me ) -> me[ '%router' ]
+@get_app        = ( me ) -> me[ '%app' ]
+@get_router     = ( me ) -> me[ '%router' ]
+@get_sio_server = ( me ) -> me[ '%sio-server' ]
 
 #-----------------------------------------------------------------------------------------------------------
 @emit = ( me, socket, type, data ) ->
@@ -128,15 +132,23 @@ new_router                = require 'socket.io-events'
   help "emitted #{rpr type}; #{rpr data}"
 
 #-----------------------------------------------------------------------------------------------------------
-@emit_news  = ( me, topic, data ) ->
-  me[ '%sio-server' ].emit 'news', topic, data
+@emit_news  = ( me, type, topic, data ) ->
+  switch arity = arguments.length
+    when 3
+      data  = topic
+      topic = type
+      type  = 'news'
+    when 4
+      null
+    else
+      throw new Error "expected 3 or 4 arguments, got #{arity}"
+  ( @get_sio_server me ).emit type, topic, data
 
 #-----------------------------------------------------------------------------------------------------------
 @get_client_id = ( me, socket ) ->
   ### http://stackoverflow.com/a/24232050/256361 ###
   ### first form when used in a Socket.IO handler, second form when used in a router's handler: ###
   return socket.client?.id ? socket.sock.client.id
-
 
 #---------------------------------------------------------------------------------------------------------
 @_get_monitor = =>
