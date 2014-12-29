@@ -1,6 +1,6 @@
 {
   "name": "soba-server",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "server-side part of SoBa socket-based communication",
   "main": "lib/main.js",
   "scripts": {
