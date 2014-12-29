@@ -98,12 +98,12 @@ for name_ of TEACUP
                 { type, data, } = data
                 switch type
                   when 'helo'
-                    message = "received event: type \"helo\"; updated client ID"
+                    message = "server received event: type \"helo\"; updated client ID"
                   else
                     if data?
-                      message = "received event: type #{rpr type}; #{rpr data}"
+                      message = "server received event: type #{rpr type}; #{rpr data}"
                     else
-                      message = "received event: type #{rpr type}"
+                      message = "server received event: type #{rpr type}"
               #.............................................................................................
               when 'client-count'
                 { value, delta, } = data
@@ -115,9 +115,9 @@ for name_ of TEACUP
               when 'sent-event'
                 { type, data, } = data
                 if data?
-                  message = "sent event: type #{rpr type}; #{rpr data}"
+                  message = "client sent event: type #{rpr type}; #{rpr data}"
                 else
-                  message = "sent event: type #{rpr type}"
+                  message = "client sent event: type #{rpr type}"
               else
                 message = "topic: #{topic}, data: #{rpr data}"
             #...............................................................................................
