@@ -79,58 +79,56 @@ for name_ of TEACUP
         DIV '#client-id'
         DIV '#news'
         COFFEESCRIPT =>
-          log     = console.log.bind console
-          rpr     = JSON.stringify.bind JSON
-          socket  = io()
-          #.................................................................................................
-          emit = ( type, data ) ->
-            publish_news 'sent-event', { type, data, }
-            socket.emit type, data
-          #.................................................................................................
-          scroll  = ->
-            ( $ 'html, body' ).stop().animate { scrollTop: ( $ '#bottom' ).offset().top }, 2000
-          #.................................................................................................
-          publish_news = ( topic, data ) ->
-            log '©4363t2', rpr ( x for x in arguments)
-            switch topic
-              #.............................................................................................
-              when 'received-event'
-                { type, data, } = data
-                switch type
-                  when 'helo'
-                    message = "server received event: type \"helo\"; updated client ID"
-                  else
-                    if data?
-                      message = "server received event: type #{rpr type}; #{rpr data}"
-                    else
-                      message = "server received event: type #{rpr type}"
-              #.............................................................................................
-              when 'client-count'
-                { value, delta, } = data
-                if delta > 0
-                  message = "client count now up to #{value}"
-                else
-                  message = "client count now down to #{value}"
-              #.............................................................................................
-              when 'sent-event'
-                { type, data, } = data
-                if data?
-                  message = "client sent event: type #{rpr type}; #{rpr data}"
-                else
-                  message = "client sent event: type #{rpr type}"
-              else
-                message = "topic: #{topic}, data: #{rpr data}"
-            #...............................................................................................
-            ( $ '#news' ).append ( $ '<div></div>' ).text message
-          #.................................................................................................
-          publish_client_id = ( data ) ->
-            log '©kl62m', rpr ( x for x in arguments)
-            ( $ '#client-id' ).append ( $ '<div></div>' ).text "Client-ID: #{data[ 'client-id' ]}"
-          #.................................................................................................
-          socket.on 'news', publish_news
-          socket.on 'helo', publish_client_id
-          emit 'helo'
-          emit 'foo', 42
-          emit 'bar', { baz: true, }
+          ( $ 'document' ).ready ->
+            log     = console.log.bind console
+            rpr     = JSON.stringify.bind JSON
+            socket  = io()
+            #.................................................................................................
+            emit = ( type, data ) ->
+              publish_news 'sent-event', { type, data, }
+              socket.emit type, data
+            #.................................................................................................
+            scroll_to_bottom = ->
+              # log '©Rafbc', ( $ '#bottom' ).offset
+              ( $ 'html, body' ).stop().animate { scrollTop: ( $ '#bottom' ).offset().top }, 500
+            #.................................................................................................
+            publish_news = ( topic, data ) ->
+              # log '©4363t2', rpr ( x for x in arguments)
+              switch topic
+                #.............................................................................................
+                when 'received-event'
+                  { type, data, } = data
+                  if data? then               message = "server received: type #{rpr type}; #{rpr data}"
+                  else                        message = "server received: type #{rpr type}"
+                #.............................................................................................
+                when 'updated-client-id' then message = "updated client ID: #{rpr data}"
+                #.............................................................................................
+                when 'client-count'
+                  { value, delta, } = data
+                  if delta > 0 then           message = "client count: up to #{value}"
+                  else                        message = "client count: down to #{value}"
+                #.............................................................................................
+                when 'sent-event'
+                  { type, data, } = data
+                  if data? then               message = "client sent: type #{rpr type}; #{rpr data}"
+                  else                        message = "client sent: type #{rpr type}"
+                #.............................................................................................
+                else                          message = "topic: #{topic}, data: #{rpr data}"
+              #...............................................................................................
+              ( $ '#news' ).append ( $ '<div></div>' ).text message
+              scroll_to_bottom()
+            #.................................................................................................
+            publish_client_id = ( data ) ->
+              # log '©kl62m', rpr ( x for x in arguments)
+              ( $ '#client-id' ).append ( $ '<div></div>' ).text "Client-ID: #{data[ 'client-id' ]}"
+              publish_news 'updated-client-id', data[ 'client-id' ]
+              scroll_to_bottom()
+            #.................................................................................................
+            socket.on 'news', publish_news
+            socket.on 'helo', publish_client_id
+            socket.on 'connect', =>
+              emit 'helo'
+              # emit 'foo', 42
+              # emit 'bar', { baz: true, }
         #===================================================================================================
         DIV '#bottom'
