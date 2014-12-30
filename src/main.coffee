@@ -165,7 +165,7 @@ new_router                = require 'socket.io-events'
 @serve = ( me ) ->
   # me[ '%http-server' ] = me[ '%app' ].listen me[ 'port' ], ->
   me[ '%http-server' ] = me[ '%http-server' ].listen me[ 'port' ], ->
-    help "server process running on Node v#{process.versions[ 'node' ]}"
+    help "SoBa ソバ Server running on Node v#{process.versions[ 'node' ]}"
     { address: host, family, port, } = me[ '%http-server' ].address()
     help "SoBa ソバ Server listening to http://#{host}:#{port} (#{family})"
 
