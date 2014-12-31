@@ -49,9 +49,12 @@ for name_ of TEACUP
         SCRIPT src: '/socket.io/socket.io.js'
         STYLE """
           body {
-            background-image:   url(./public/soba-logo.png);
-            background-repeat:  no-repeat;
-            padding:            1em;
+            background-image:         url(./public/soba-logo.png);
+            background-repeat:        no-repeat;
+            padding:                  1em;
+            background-attachment:    fixed;
+            background-size:          100%;
+            -webkit-background-size:  100%;
           }
           #client-id {
             // text-align:         right;
