@@ -23,6 +23,7 @@ Y88b  d88P Y88b. .d88P 888   d88P  d8888888888    Y88b  d88P 888        888  T88
 
 ############################################################################################################
 njs_path                  = require 'path'
+njs_fs                    = require 'fs'
 #...........................................................................................................
 TRM                       = require 'coffeenode-trm'
 rpr                       = TRM.rpr.bind TRM
@@ -62,7 +63,8 @@ new_router                = require 'socket.io-events'
   #.........................................................................................................
   app.use '/public', new_app.static njs_path.join __dirname, '../public'
   app.use '/common', new_app.static njs_path.join __dirname, '../common'
-  app.get '/', @_get_monitor()
+  app.get '/',        @_view_monitor()
+  app.get '/reload',  @_view_reload()
   router      = new_router()
   #.........................................................................................................
   http_server = njs_http.Server app
@@ -151,15 +153,27 @@ new_router                = require 'socket.io-events'
   return socket.client?.id ? socket.sock.client.id
 
 #---------------------------------------------------------------------------------------------------------
-@_get_monitor = =>
+@_view_monitor = =>
   return ( request, response ) =>
     headers =
       'Access-Control-Allow-Origin':  '*'
       'Content-Type':                 'text/html; charset=utf-8'
     response.writeHead 200, headers
     response.write TEMPLATES.monitor()
-    #.......................................................................................................
     response.end()
+
+#---------------------------------------------------------------------------------------------------------
+@_view_reload = =>
+  return ( request, response ) =>
+    headers =
+      'Access-Control-Allow-Origin':  '*'
+      'Content-Type':                 'text/plain; charset=utf-8'
+    response.writeHead 200, headers
+    response.write "reloading"
+    response.end()
+    #.......................................................................................................
+    route     = '/tmp/inode-bridge.txt'
+    njs_fs.writeFileSync route, "this is a signal file", { encoding: 'utf-8', }
 
 #-----------------------------------------------------------------------------------------------------------
 @serve = ( me ) ->
@@ -183,7 +197,7 @@ unless module.parent?
   # http_server               = ( require 'http'      ).Server app
   # SIO                       = ( require 'socket.io' ) http_server
   # port                      = 3000
-  # app.get '/', @_get_monitor()
+  # app.get '/', @_view_monitor()
   # http_server = http_server.listen port, ->
   #   # debug '©yXWeN', http_server.address()
   #   help "http_server process running on Node v#{process.versions[ 'node' ]}"

@@ -53,8 +53,8 @@ for name_ of TEACUP
             background-repeat:        no-repeat;
             padding:                  1em;
             background-attachment:    fixed;
-            background-size:          100%;
-            -webkit-background-size:  100%;
+            background-size:          100% auto;
+            -webkit-background-size:  100% auto;
           }
           #client-id {
             // text-align:         right;
