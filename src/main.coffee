@@ -38,6 +38,9 @@ help                      = TRM.get_logger 'help',    badge
 #...........................................................................................................
 TEMPLATES                 = require './TEMPLATES'
 #...........................................................................................................
+### `express` and `socket.io` take quite a while to load, so we issue a confirmational message: ###
+help "setting up SoBa ソバ Server"
+#...........................................................................................................
 new_app                   = require 'express'
 njs_http                  = require 'http'
 new_sio_server            = require 'socket.io'
@@ -64,7 +67,7 @@ new_router                = require 'socket.io-events'
   app.use '/public', new_app.static njs_path.join __dirname, '../public'
   app.use '/common', new_app.static njs_path.join __dirname, '../common'
   app.get '/',        @_view_monitor()
-  app.get '/reload',  @_view_reload()
+  app.get '/restart',  @_view_restart()
   router      = new_router()
   #.........................................................................................................
   http_server = njs_http.Server app
@@ -163,17 +166,19 @@ new_router                = require 'socket.io-events'
     response.end()
 
 #---------------------------------------------------------------------------------------------------------
-@_view_reload = =>
+@_view_restart = =>
   return ( request, response ) =>
     headers =
       'Access-Control-Allow-Origin':  '*'
       'Content-Type':                 'text/plain; charset=utf-8'
     response.writeHead 200, headers
-    response.write "reloading"
+    response.write "restarting"
     response.end()
     #.......................................................................................................
+    urge      "received restart signal"
     route     = '/tmp/inode-bridge.txt'
-    njs_fs.writeFileSync route, "this is a signal file", { encoding: 'utf-8', }
+    process.exit()
+    # throw TRM.red "SoBa ソバ Server restarting"
 
 #-----------------------------------------------------------------------------------------------------------
 @serve = ( me ) ->
