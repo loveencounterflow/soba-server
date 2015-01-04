@@ -182,6 +182,7 @@ new_router                = require 'socket.io-events'
 
 #-----------------------------------------------------------------------------------------------------------
 @serve = ( me ) ->
+  me = me[ '%soba-server' ] ? me
   # me[ '%http-server' ] = me[ '%app' ].listen me[ 'port' ], ->
   me[ '%http-server' ] = me[ '%http-server' ].listen me[ 'port' ], ->
     help "SoBa ソバ Server running on Node v#{process.versions[ 'node' ]}"
