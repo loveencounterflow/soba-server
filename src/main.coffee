@@ -147,7 +147,7 @@ new_router                = require 'socket.io-events'
       null
     else
       throw new Error "expected 3 or 4 arguments, got #{arity}"
-  ( @get_sio_server me ).emit type, topic, data
+  ( @get_sio_server me ).emit type, [ topic, data, ]
 
 #-----------------------------------------------------------------------------------------------------------
 @get_client_id = ( me, socket ) ->
