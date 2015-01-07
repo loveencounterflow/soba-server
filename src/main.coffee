@@ -79,12 +79,14 @@ new_router                = require 'socket.io-events'
     '%http-server':         http_server
     '%sio-server':          sio_server
     '%router':              router
+    ### TAINT make configurable ###
+    'verbose':              no
     'port':                 port
     'client-count':         0
   #---------------------------------------------------------------------------------------------------------
   router.on '*', ( socket, event, next ) =>
     [ type, data, ] = event
-    help 'received-event:', type, data ? './.'
+    help 'received-event:', type, data ? './.' if R[ 'verbose' ]
     @emit_news R, 'received-event', { 'type': type, }
     next()
   #.........................................................................................................
@@ -134,7 +136,7 @@ new_router                = require 'socket.io-events'
 #-----------------------------------------------------------------------------------------------------------
 @emit = ( me, socket, type, data ) ->
   socket.emit type, data
-  help "emitted #{rpr type}; #{rpr data}"
+  help "emitted #{rpr type}; #{rpr data}" if me[ 'verbose' ]
 
 #-----------------------------------------------------------------------------------------------------------
 @emit_news  = ( me, type, topic, data ) ->
